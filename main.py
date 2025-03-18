@@ -1,160 +1,92 @@
-import re
+import dna
 
-#1
-def validate_dna(dna_sequence):
-    dna_sequence = dna_sequence.upper()
-    if len(dna_sequence) < 10:
-        return False, "Liczba nukleotydów < 10"
-
-    if not set(dna_sequence).issubset({'A', 'T', 'C', 'G'}):
-        return False, "Sekwencja zawiera nieprawidłowe znaki"
-    return True
-
-
-def transcription_dna_rna(dna_sequence):
-    dna_sequence = dna_sequence.upper()
-    
-    if validate_dna(dna_sequence) == False:
-        return False
-    transcription_map = {'A': 'U', 'C': 'G', 'G': 'C', 'T': 'A'}
-    rna_sequence = ""
-    for nuc in dna_sequence:
-        rna_sequence += transcription_map[nuc]
-
-    return rna_sequence
-
-
-print(transcription_dna_rna("TACTAGAGCATT"))
-
+#1 Test jednostkowy
+print(dna.transcription_dna_rna('TACTAGAGCATT'))
 
 #2
-def find_matching_bases(seq1, seq2):
-    matching_bases = []
-    for i in range(len(seq1)):
-        if seq1[i] == seq2[i]:
-            matching_bases.append((i, seq1[i]))
-    return matching_bases
-
-
-def calculate_match_percentage(seq1, seq2):
-    match_count = 0
-    for i in range(len(seq1)):
-        if seq1[i] == seq2[i]:
-            match_count += 1
-
-    return (match_count / len(seq1)) * 100
-
-
-def combine_sequences(seq1, seq2):
-    """Łączy dwie sekwencje DNA."""
-    return f"{seq1} \n {seq2}"
-
-
-def compare_dna_sequences(seq1, seq2):
-    """Główna funkcja zarządzająca porównaniem DNA."""
-    valid1= validate_dna(seq1)
-    valid2= validate_dna(seq2)
-
-    if not valid1 or not valid2:
-        return "Błąd: Jedna lub obie sekwencje są niepoprawne."
-
-    if len(seq1) != len(seq2):
-        return "Błąd: Sekwencje muszą mieć identyczną długość."
-
-    matching_nucleotides = find_matching_bases(seq1, seq2)
-    match_percentage = calculate_match_percentage(seq1, seq2)
-    combined_sequences = combine_sequences(seq1, seq2)
-    print(f"matching_nucleotides: {matching_nucleotides}")
-    print(f"match_percentage: {round(match_percentage, 2)}%")
-    print(f"combined_sequences: \n {combined_sequences}")
-
-
 seq1 = "TTAAGTGTAGCCTTGTGTGACATGTATTTTTAT"
 seq2 = "TTTCTAGGTAGTTGTGGTGAGTTTAGTTGATAT"
 
-compare_dna_sequences(seq1, seq2)
-
-
+compare = dna.compare_dna_sequences(seq1, seq2)
+print(f"zasady o identycznym położeniu: {compare[0]}")
+print(f"procent zgodności obu sekwencji DNA: {compare[1]}%")
+print(f"połączenie dwóch sekwencji: {compare[2]}")
 #3
-def determine_amino_acid(codon):
+codon = "CUU"
+print(f"Amino Acid: {dna.determine_amino_acid(codon)}")
 
-    codon_table = {
-        'U': {
-            'U': {'U': 'Phe (F)', 'C': 'Phe (F)', 'A': 'Leu (L)', 'G': 'Leu (L)'},
-            'C': {'U': 'Ser (S)', 'C': 'Ser (S)', 'A': 'Ser (S)', 'G': 'Ser (S)'},
-            'A': {'U': 'Tyr (Y)', 'C': 'Tyr (Y)', 'A': None, 'G': None},
-            'G': {'U': 'Cys (C)', 'C': 'Cys (C)', 'A': None, 'G': 'Trp (W)'}
-        },
-        'C': {
-            'U': {'U': 'Leu (L)', 'C': 'Leu (L)', 'A': 'Leu (L)', 'G': 'Leu (L)'},
-            'C': {'U': 'Pro (P)', 'C': 'Pro (P)', 'A': 'Pro (P)', 'G': 'Pro (P)'},
-            'A': {'U': 'His (H)', 'C': 'His (H)', 'A': 'Gln (Q)', 'G': 'Gln (Q)'},
-            'G': {'U': 'Arg (R)', 'C': 'Arg (R)', 'A': 'Arg (R)', 'G': 'Arg (R)'}
-        },
-        'A': {
-            'U': {'U': 'Ile (I)', 'C': 'Ile (I)', 'A': 'Ile (I)', 'G': 'Met (M)'},
-            'C': {'U': 'Thr (T)', 'C': 'Thr (T)', 'A': 'Thr (T)', 'G': 'Thr (T)'},
-            'A': {'U': 'Asn (N)', 'C': 'Asn (N)', 'A': 'Lys (K)', 'G': 'Lys (K)'},
-            'G': {'U': 'Ser (S)', 'C': 'Ser (S)', 'A': 'Arg (R)', 'G': 'Arg (R)'}
-        },
-        'G': {
-            'U': {'U': 'Val (V)', 'C': 'Val (V)', 'A': 'Val (V)', 'G': 'Val (V)'},
-            'C': {'U': 'Ala (A)', 'C': 'Ala (A)', 'A': 'Ala (A)', 'G': 'Ala (A)'},
-            'A': {'U': 'Asp (D)', 'C': 'Asp (D)', 'A': 'Glu (E)', 'G': 'Glu (E)'},
-            'G': {'U': 'Gly (G)', 'C': 'Gly (G)', 'A': 'Gly (G)', 'G': 'Gly (G)'}
-        }
-    }
+#4
+print(dna.translate_mRNA("CUUCUUCUU"))
 
-    if len(codon) != 3:
-        return "Error: Codon must be 3 nucleotides long."
+#5
+seqDNA = "ATCGAATGGCGCAAAACCTTTCGCGGTATGGCATGATAGCGCCCGGAAGAGAGTCAATTCAGG"
 
-    codon = codon.upper()
+#Wyznacz ilość par zasad w łańcuchu
+dna_length = len(seqDNA)
+print(f"Ilość par zasad: {dna_length}")
 
-    for nucleotide in codon:
-        if nucleotide not in 'UCAG':
-            return "Error: Codon contains invalid characters."
+#Wyznacz nazwy zasad: pierwszą, środkową oraz ostatnią
+first_base = seqDNA[0]
+if len(seqDNA) % 2 == 0:
+    middle_base = seqDNA[dna_length // 2 - 1], seqDNA[dna_length // 2 + 1]
 
-    amino_acid = codon_table[codon[0]][codon[1]][codon[2]]
+else:
+    middle_base = seqDNA[dna_length // 2]
 
-    if amino_acid is None:
-        return "STOP Codon"
+last_base = seqDNA[-1]
+
+print(f"Pierwsza zasada: {first_base}")
+print(f"Środkowa zasada: {middle_base}")
+print(f"Ostatnia zasada: {last_base}")
+
+#Oblicz liczebność poszczególnych zasad w łańcuchu DNA
+
+
+A, T, C, G = 0, 0, 0, 0
+for base in seqDNA:
+    if base == 'A':
+        A += 1
+    elif base == 'T':
+        T += 1
+    elif base == 'C':
+        C += 1
+    elif base == 'G':
+        G += 1
     else:
-        return amino_acid
+        break
+        print("Błędna baza")
+
+print(f"A:{A}, T:{T}, C:{C}, G:{G}")
+
+#Oblicz zawartość % adeniny (A) i cytozyny (C)
 
 
-codon = input("Enter a codon")
-amino_acid = determine_amino_acid(codon)
-print(f"Amino Acid: {amino_acid}")
+print(f"Zawartość A: {round((A / dna_length )*100, 2)}%, C: {round((C / dna_length)*100, 2)}%")
 
 
-# 4
-def translate_mRNA(mRNA):
-    """
-    Tłumaczy sekwencję mRNA na sekwencję aminokwasów.
+dna_no_g = seqDNA.replace("G", "")
+print(f"DNA po usunięciu G: {dna_no_g}")
 
-    Args:
-        mRNA (str): Sekwencja mRNA.
+#Odwróć listę zasad DNA (rewers znaków)
+print(f"Odwrócona sekwencja DNA: {seqDNA[::-1]}")
 
-    Returns:
-        str: Sekwencja aminokwasów lub komunikat o błędzie.
-    """
+#Wykonaj transkrypcję na mRNA
+mRNA, valid = dna.transcription_dna_rna(seqDNA)
+print(f"Transkrypcja mRNA: {mRNA}")
 
-    try:
-        mRNA = mRNA.upper()
-        if len(mRNA) % 3 != 0:
-            raise ValueError("Długość mRNA musi być wielokrotnością 3.")
-        if not all(nucleotide in 'UCAG' for nucleotide in mRNA):
-            raise ValueError("mRNA zawiera nieprawidłowe nukleotydy.")
+#Odwróć sekwencję mRNA
 
-        amino_acids = []
-        for i in range(0, len(mRNA), 3):
-            codon = mRNA[i:i + 3]
-            amino_acid = determine_amino_acid(codon)
-            if amino_acid == "STOP":
-                break  # Przerywa translację po napotkaniu kodonu STOP
-            amino_acids.append(amino_acid)
+print(f"Odwrócona sekwencja mRNA: {mRNA[::-1]}")
 
-        return "-".join(amino_acids)
+#Wykonaj translację mRNA
+print(f"Translacja mRNA: {dna.translate_mRNA(mRNA)}")
 
-    except ValueError as e:
-        return f"Błąd: {e}"
+
+#7
+
+Aminokwasy = dna.Aminokwasy()
+fasta = dna.wczytaj_fasta('seqProtein1.fasta')
+print(Aminokwasy.oblicz_mase_bialka_z_aminokwasow(fasta))
+print(Aminokwasy.oblicz_mase_bialka_z_dna('TTAAGTGTATTATTA'))
+
+
